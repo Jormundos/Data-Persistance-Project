@@ -6,15 +6,19 @@ using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 // Sets the script to be executed later than all default scripts
 // This is helpful for UI, since other things may need to be initialized before setting the UI
 [DefaultExecutionOrder(1000)]
 public class MenuUIHandler : MonoBehaviour
-{    
+{
+    public Text bestScoreText;
+
     private void Start()
     {
-        
+        GameManager.instance.LoadBestPlayer();
+        bestScoreText.text = $"Best Score : {GameManager.instance.bestPlayerName} : {GameManager.instance.bestScore}";
     }
 
     public void StartNew()
@@ -22,20 +26,8 @@ public class MenuUIHandler : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
-    public void SaveColorClicked()
-    {
-        //MainManager.instance.SaveColor();
-    }
-
-    public void LoadColorClicked()
-    {
-        //MainManager.instance.LoadColor();
-    }
-
     public void Exit()
     {
-        //MainManager.instance.SaveColor();
-
 #if UNITY_EDITOR
         EditorApplication.ExitPlaymode();
 #else

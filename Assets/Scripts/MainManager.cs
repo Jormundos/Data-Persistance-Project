@@ -1,17 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
-{
-    public static MainManager instance;
-    
+{    
     public Brick BrickPrefab;
     public int LineCount = 6;
     public Rigidbody Ball;
 
+    public Text bestScoreText;
     public Text ScoreText;
     public GameObject GameOverText;
     
@@ -20,17 +20,14 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
+    private string inputPlayerName;
+
     
     private void Awake()
     {
-        if(instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        instance = this;
-        DontDestroyOnLoad(gameObject);
+        CreateBricks();
+        inputPlayerName = GameManager.instance.inputPlayerName;
+        bestScoreText.text = $"Best Score : {GameManager.instance.bestPlayerName} : {GameManager.instance.bestScore}";
     }
 
     private void Update()
@@ -52,6 +49,7 @@ public class MainManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                GameManager.instance.LoadBestPlayer();
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
@@ -83,6 +81,13 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        if (m_Points > GameManager.instance.bestScore)
+        {
+            bestScoreText.text = $"Best Score : {inputPlayerName} : {m_Points}";
+
+            GameManager.instance.SaveBestPlayer(inputPlayerName, m_Points);
+        }
+        
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
